@@ -1,6 +1,7 @@
 import os
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader, random_split
 import cv2
+from transform import train_transform, val_transform
 
 
 class PlantVillageDataset(Dataset):
@@ -40,3 +41,23 @@ class PlantVillageDataset(Dataset):
             augmented = self.transform(image=image)
             image = augmented["image"]
         return image, label
+
+
+def prepare_datasets(config):
+    full_dataset = PlantVillageDataset(config["root_dir"], transform=None)
+
+    val_size = int(len(full_dataset) * config["dataset"]["test_size"])
+    train_size = len(full_dataset) - val_size
+    train_dataset, val_dataset = random_split(full_dataset, [train_size, val_size])
+
+    train_dataset.dataset.transform = train_transform
+    val_dataset.dataset.transform = val_transform
+
+    train_loader = DataLoader(
+        train_dataset, batch_size=config["train"]["batch_size"], shuffle=True
+    )
+    val_loader = DataLoader(
+        val_dataset, batch_size=config["train"]["batch_size"], shuffle=False
+    )
+
+    return train_loader, val_loader
