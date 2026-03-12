@@ -6,3 +6,4 @@ opencv-python
 albumentations
 torchvision
 mlflow
+seaborn
