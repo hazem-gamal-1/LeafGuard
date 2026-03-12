@@ -14,7 +14,7 @@ def main(eval=False):
         run_id = run.info.run_id
 
         print("Starting training...")
-        model = train(config, run_id=run_id)
+        model = train(config)
 
 
         print("Evaluating on test set...")
@@ -24,7 +24,7 @@ def main(eval=False):
                 test_loader.dataset.dataset.idx_to_class[i]
                 for i in range(len(test_loader.dataset.dataset.idx_to_class))
             ]
-            evaluate(model, test_loader, class_names, run_id=run_id)
+            evaluate(model, test_loader, class_names)
 
         print(f"Run finished. Run ID: {run_id}")
 

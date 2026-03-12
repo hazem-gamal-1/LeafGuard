@@ -7,7 +7,7 @@ import mlflow
 import matplotlib.pyplot as plt
 
 
-def train(config, run_id=None):
+def train(config):
     train_loader, val_loader, _ = prepare_datasets(config)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -18,7 +18,6 @@ def train(config, run_id=None):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=config["train"]["learning_rate"])
 
-    mlflow.start_run(run_id=run_id)
     mlflow.log_params(
         {
             "learning_rate": config["train"]["learning_rate"],

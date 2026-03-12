@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-def evaluate(model, dataloader, class_names, run_id=None):
+def evaluate(model, dataloader, class_names):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -43,7 +43,6 @@ def evaluate(model, dataloader, class_names, run_id=None):
         "f1_score": f1,
     }
 
-    mlflow.start_run(run_id=run_id)
 
     mlflow.log_metrics(metrics)
 
