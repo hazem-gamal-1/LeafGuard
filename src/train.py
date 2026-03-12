@@ -8,10 +8,9 @@ import matplotlib.pyplot as plt
 
 
 def train(config, run_id=None):
-    train_loader, val_loader = prepare_datasets(config)
+    train_loader, val_loader, _ = prepare_datasets(config)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
     model = PlantDiseaseClassifier(
         config["dataset"]["num_classes"], config["train"]["freeze_backbone"]
     ).to(device)
@@ -28,25 +27,20 @@ def train(config, run_id=None):
             "epochs": config["train"]["epochs"],
             "freeze_backbone": config["train"]["freeze_backbone"],
             "test_size": config["dataset"]["test_size"],
+            "val_size": config["dataset"]["val_size"],
         }
     )
 
-    train_losses = []
-    val_losses = []
-    train_accs = []
-    val_accs = []
+    train_losses, val_losses = [], []
+    train_accs, val_accs = [], []
 
     for epoch in range(config["train"]["epochs"]):
         model.train()
-        running_loss = 0.0
-        correct = 0
-        total = 0
-
+        running_loss, correct, total = 0.0, 0, 0
         for images, labels in train_loader:
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             loss = criterion(outputs, labels)
-
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -62,17 +56,13 @@ def train(config, run_id=None):
         train_accs.append(train_acc)
 
         model.eval()
-        val_loss = 0.0
-        val_correct = 0
-        val_total = 0
-
+        val_loss, val_correct, val_total = 0.0, 0, 0
         with torch.no_grad():
             for images, labels in val_loader:
                 images, labels = images.to(device), labels.to(device)
                 outputs = model(images)
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
-
                 _, predicted = torch.max(outputs, 1)
                 val_total += labels.size(0)
                 val_correct += (predicted == labels).sum().item()
@@ -82,6 +72,7 @@ def train(config, run_id=None):
         val_losses.append(avg_val_loss)
         val_accs.append(val_acc)
 
+        # Log metrics to MLflow
         mlflow.log_metrics(
             {
                 "train_loss": avg_train_loss,
@@ -98,28 +89,28 @@ def train(config, run_id=None):
             f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.4f}"
         )
 
+    # Plot curves
     plt.figure()
-    plt.plot(range(len(train_losses)), train_losses, label="Train Loss")
-    plt.plot(range(len(val_losses)), val_losses, label="Val Loss")
+    plt.plot(train_losses, label="Train Loss")
+    plt.plot(val_losses, label="Val Loss")
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
-    plt.title("Training vs Validation Loss")
+    plt.title("Loss Curves")
     plt.legend()
     plt.savefig("loss_curves.png")
     mlflow.log_artifact("loss_curves.png", "plots")
     plt.close()
 
     plt.figure()
-    plt.plot(range(len(train_accs)), train_accs, label="Train Acc")
-    plt.plot(range(len(val_accs)), val_accs, label="Val Acc")
+    plt.plot(train_accs, label="Train Acc")
+    plt.plot(val_accs, label="Val Acc")
     plt.xlabel("Epoch")
     plt.ylabel("Accuracy")
-    plt.title("Training vs Validation Accuracy")
+    plt.title("Accuracy Curves")
     plt.legend()
     plt.savefig("accuracy_curves.png")
     mlflow.log_artifact("accuracy_curves.png", "plots")
     plt.close()
 
     mlflow.end_run()
-
-    return model, train_loader, val_loader
+    return model
