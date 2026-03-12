@@ -3,7 +3,7 @@ from torch.utils.data import Dataset
 import cv2
 
 
-class PlantVillage(Dataset):
+class PlantVillageDataset(Dataset):
     def __init__(self, root_dir, transform=None):
         super().__init__()
         self.root_dir = root_dir
