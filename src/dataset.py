@@ -1,7 +1,12 @@
 import os
+import torch
 from torch.utils.data import Dataset, DataLoader, random_split
 import cv2
 from transform import train_transform, val_transform
+
+
+g = torch.Generator()
+g.manual_seed(42)
 
 
 class PlantVillageDataset(Dataset):
@@ -46,18 +51,36 @@ class PlantVillageDataset(Dataset):
 def prepare_datasets(config):
     full_dataset = PlantVillageDataset(config["root_dir"], transform=None)
 
-    val_size = int(len(full_dataset) * config["dataset"]["test_size"])
-    train_size = len(full_dataset) - val_size
-    train_dataset, val_dataset = random_split(full_dataset, [train_size, val_size])
+    total_len = len(full_dataset)
+    test_len = int(total_len * config["dataset"]["test_size"])
+    val_len = int(total_len * config["dataset"]["val_size"])
+    train_len = total_len - val_len - test_len
+
+    train_dataset, val_dataset, test_dataset = random_split(
+        full_dataset, [train_len, val_len, test_len], generator=g
+    )
 
     train_dataset.dataset.transform = train_transform
     val_dataset.dataset.transform = val_transform
+    test_dataset.dataset.transform = val_transform
 
     train_loader = DataLoader(
-        train_dataset, batch_size=config["train"]["batch_size"], shuffle=True
+        train_dataset,
+        batch_size=config["train"]["batch_size"],
+        shuffle=True,
+        num_workers=4,
     )
     val_loader = DataLoader(
-        val_dataset, batch_size=config["train"]["batch_size"], shuffle=False
+        val_dataset,
+        batch_size=config["train"]["batch_size"],
+        shuffle=False,
+        num_workers=4,
+    )
+    test_loader = DataLoader(
+        test_dataset,
+        batch_size=config["train"]["batch_size"],
+        shuffle=False,
+        num_workers=4,
     )
 
-    return train_loader, val_loader
+    return train_loader, val_loader, test_loader
