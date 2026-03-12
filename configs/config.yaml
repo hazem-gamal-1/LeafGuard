@@ -1,15 +1,13 @@
 root_dir: "./data"
 experiment_name: "plant_disease_classification_resnt50"
-dataset: 
+dataset:
   name: "PlantVillage"
   num_classes: 15
-  test_size: 0.3
-
-
+  test_size: 0.1
+  val_size: 0.1
 
 train:
   freeze_backbone: true
   epochs: 50
   batch_size: 32
   learning_rate: 0.001
-  
