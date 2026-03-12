@@ -12,6 +12,7 @@ class PlantVillage(Dataset):
         self.idx_to_class = {}
         self.images = []
         self.labels = []
+        self._prepare_dataset()
 
     def _prepare_dataset(self):
         classes = sorted([folder for folder in os.listdir(self.root_dir)])
@@ -22,8 +23,8 @@ class PlantVillage(Dataset):
         for class_name in classes:
             folder_path = os.path.join(self.root_dir, class_name)
             for image in os.listdir(folder_path):
-                self.images.append(image)
-                self.labels.append(self.class_to_idx[image])
+                self.images.append(os.path.join(folder_path, image))
+                self.labels.append(self.class_to_idx[class_name])
 
     def __len__(self):
         return len(self.images)
@@ -36,6 +37,6 @@ class PlantVillage(Dataset):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         if self.transform:
-            augmented = self.transform(image)
+            augmented = self.transform(image=image)
             image = augmented["image"]
         return image, label
