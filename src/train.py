@@ -5,7 +5,7 @@ import torch.optim as optim
 import torch.nn as nn
 import mlflow
 import matplotlib.pyplot as plt
-
+from tqdm import tqdm
 
 def train(config):
     train_loader, val_loader, _ = prepare_datasets(config)
@@ -36,7 +36,8 @@ def train(config):
     for epoch in range(config["train"]["epochs"]):
         model.train()
         running_loss, correct, total = 0.0, 0, 0
-        for images, labels in train_loader:
+        loop = tqdm(train_loader, desc=f"Epoch {epoch+1}", leave=False)
+        for images, labels in loop:
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
             loss = criterion(outputs, labels)
