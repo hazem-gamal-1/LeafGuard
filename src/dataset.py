@@ -67,17 +67,21 @@ def prepare_datasets(config):
     train_loader = DataLoader(
         train_dataset,
         batch_size=config["train"]["batch_size"],
-        shuffle=True
+        shuffle=True,
+        num_workers=2
     )
     val_loader = DataLoader(
         val_dataset,
         batch_size=config["train"]["batch_size"],
-        shuffle=False
+        shuffle=False,
+        num_workers=2
+
     )
     test_loader = DataLoader(
         test_dataset,
         batch_size=config["train"]["batch_size"],
-        shuffle=False
+        shuffle=False,
+        num_workers=2
     )
 
     return train_loader, val_loader, test_loader
