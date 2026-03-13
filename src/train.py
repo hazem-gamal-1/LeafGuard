@@ -32,10 +32,10 @@ def train(config):
 
     train_losses, val_losses = [], []
     train_accs, val_accs = [], []
-
+    best_val_acc=0
     for epoch in range(config["train"]["epochs"]):
         model.train()
-        running_loss, correct, total,best_val_acc= 0.0, 0, 0,0
+        running_loss, correct, total= 0.0, 0, 0
         loop = tqdm(train_loader, desc=f"Epoch {epoch+1}", leave=False)
 
         if epoch == config["train"]["unfreeze_backbone_epoch"]:
