@@ -1,4 +1,4 @@
-root_dir: "/content/LeafGuard/PlantVillage"
+root_dir: "/content/drive/MyDrive/LeafGuard/data/PlantVillage"
 experiment_name: "plant_disease_classification_resnt50"
 dataset:
   name: "PlantVillage"
