@@ -29,9 +29,12 @@ class PlantVillageDataset(Dataset):
         for class_name in classes:
             folder_path = os.path.join(self.root_dir, class_name)
             for image in os.listdir(folder_path):
-                self.images.append(os.path.join(folder_path, image))
-                self.labels.append(self.class_to_idx[class_name])
-
+                if image.lower().endswith((".jpg", ".jpeg", ".png")): 
+                    self.images.append(os.path.join(folder_path, image))
+                    self.labels.append(self.class_to_idx[class_name])
+                else :
+                    print(f"Skipping {image}")
+                    
     def __len__(self):
         return len(self.images)
 

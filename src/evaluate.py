@@ -61,4 +61,4 @@ def evaluate(model, dataloader, class_names):
     plt.title("Confusion Matrix")
     plt.savefig("confusion_matrix.png")
     plt.close()
-    mlflow.log_artifact("confusion_matrix.png", artifact_path="plots")
+    mlflow.log_artifact("confusion_matrix.png","plots")
