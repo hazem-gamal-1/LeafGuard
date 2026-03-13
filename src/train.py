@@ -35,8 +35,13 @@ def train(config):
 
     for epoch in range(config["train"]["epochs"]):
         model.train()
-        running_loss, correct, total = 0.0, 0, 0
+        running_loss, correct, total,best_val_acc= 0.0, 0, 0,0
         loop = tqdm(train_loader, desc=f"Epoch {epoch+1}", leave=False)
+
+        if epoch == config["train"]["unfreeze_backbone_epoch"]:
+          for param in model.model.parameters():
+              param.requires_grad = True
+
         for images, labels in loop:
             images, labels = images.to(device), labels.to(device)
             outputs = model(images)
@@ -72,13 +77,18 @@ def train(config):
         val_losses.append(avg_val_loss)
         val_accs.append(val_acc)
 
-        # Log metrics to MLflow
+        if val_acc > best_val_acc:
+            best_val_acc = val_acc
+            mlflow.pytorch.log_model(model, "best_model")
+
+
         mlflow.log_metrics(
             {
                 "train_loss": avg_train_loss,
                 "train_accuracy": train_acc,
                 "val_loss": avg_val_loss,
                 "val_accuracy": val_acc,
+                "best_val_acc":best_val_acc
             },
             step=epoch,
         )
@@ -87,9 +97,10 @@ def train(config):
             f"Epoch [{epoch+1}/{config['train']['epochs']}]: "
             f"Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.4f}, "
             f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.4f}"
+            f"Best_Val_acc {best_val_acc}"
         )
 
-    # Plot curves
+
     plt.figure()
     plt.plot(train_losses, label="Train Loss")
     plt.plot(val_losses, label="Val Loss")
@@ -112,5 +123,4 @@ def train(config):
     mlflow.log_artifact("accuracy_curves.png", "plots")
     plt.close()
 
-    mlflow.end_run()
     return model
