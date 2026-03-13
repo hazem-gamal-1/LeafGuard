@@ -14,8 +14,11 @@ class PlantDiseaseClassifier(nn.Module):
 
         in_features = self.model.fc.in_features
         self.model.fc = nn.Sequential(
-            nn.Dropout(p=0.5), nn.Linear(in_features, num_classes)
-        )
+    nn.Linear(in_features, 512),
+    nn.ReLU(),
+    nn.Dropout(0.5),
+    nn.Linear(512, num_classes)
+)
 
     def forward(self, x):
         return self.model(x)
