@@ -79,7 +79,7 @@ def train(config):
 
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            mlflow.pytorch.log_model(model, name="best_model", export_model=True)
+            mlflow.pytorch.log_model(model, name="best_model")
 
 
         mlflow.log_metrics(
