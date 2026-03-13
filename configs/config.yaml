@@ -8,7 +8,7 @@ dataset:
 
 train:
   freeze_backbone: true
-  epochs: 30
+  epochs: 20
   batch_size: 32
   learning_rate: 0.0003
   unfreeze_backbone_epoch: 10
