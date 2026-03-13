@@ -1,4 +1,4 @@
-root_dir: "./data"
+root_dir: "/content/LeafGuard/PlantVillage"
 experiment_name: "plant_disease_classification_resnt50"
 dataset:
   name: "PlantVillage"
@@ -8,6 +8,7 @@ dataset:
 
 train:
   freeze_backbone: true
-  epochs: 50
+  epochs: 30
   batch_size: 32
-  learning_rate: 0.001
+  learning_rate: 0.0003
+  unfreeze_backbone_epoch: 10
