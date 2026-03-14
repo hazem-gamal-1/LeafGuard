@@ -1,3 +1,4 @@
+import argparse
 import mlflow
 from train import train
 from evaluate import evaluate
@@ -5,7 +6,13 @@ from dataset import prepare_datasets
 from utils import load_config
 
 
-def main(eval=False):
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--eval", action="store_true", help="Run evaluation after training"
+    )
+    args = parser.parse_args()
+
     config = load_config("configs/config.yaml")
 
     mlflow.set_experiment(config["experiment_name"])
@@ -17,7 +24,7 @@ def main(eval=False):
         model = train(config)
 
         print("Evaluating on test set...")
-        if eval:
+        if args.eval:
             _, _, test_loader = prepare_datasets(config)
             class_names = [
                 test_loader.dataset.dataset.idx_to_class[i]
@@ -29,4 +36,4 @@ def main(eval=False):
 
 
 if __name__ == "__main__":
-    main(True)
+    main()
