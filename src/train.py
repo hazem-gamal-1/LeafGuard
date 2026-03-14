@@ -6,6 +6,8 @@ import torch.nn as nn
 import mlflow
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import copy
+
 
 def train(config):
     train_loader, val_loader, _ = prepare_datasets(config)
@@ -32,7 +34,9 @@ def train(config):
 
     train_losses, val_losses = [], []
     train_accs, val_accs = [], []
-    best_val_acc=0
+    best_val_acc = 0
+    best_state = None
+    best_epoch = 0
     for epoch in range(config["train"]["epochs"]):
         model.train()
         running_loss, correct, total= 0.0, 0, 0
@@ -79,7 +83,9 @@ def train(config):
 
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            mlflow.pytorch.log_model(model, name="best_model")
+            best_state = copy.deepcopy(model.state_dict())
+            best_epoch = epoch
+
 
 
         mlflow.log_metrics(
@@ -88,7 +94,6 @@ def train(config):
                 "train_accuracy": train_acc,
                 "val_loss": avg_val_loss,
                 "val_accuracy": val_acc,
-                "best_val_acc":best_val_acc
             },
             step=epoch,
         )
@@ -97,10 +102,17 @@ def train(config):
             f"Epoch [{epoch+1}/{config['train']['epochs']}]: "
             f"Train Loss={avg_train_loss:.4f}, Train Acc={train_acc:.4f}, "
             f"Val Loss={avg_val_loss:.4f}, Val Acc={val_acc:.4f}, "
-            f"Best_Val_acc {best_val_acc}"
+            f" Best_Val_acc {best_val_acc}"
         )
 
 
+    mlflow.log_metric("best_epoch", best_epoch)
+    mlflow.log_metric("best_val_acc", best_val_acc)
+    mlflow.set_tag("best_epoch",  best_epoch)
+    model.load_state_dict(best_state)
+    mlflow.pytorch.log_model(model, name="best_model")
+    
+    
     plt.figure()
     plt.plot(train_losses, label="Train Loss")
     plt.plot(val_losses, label="Val Loss")
