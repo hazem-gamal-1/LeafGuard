@@ -1,4 +1,4 @@
 *.conda
 *.pyc
-*docker*
+
 *zip

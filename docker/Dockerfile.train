@@ -1,0 +1,24 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+
+RUN apt-get update && apt-get install -y \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+
+COPY requirements/ ./requirements/
+
+RUN pip install --no-cache-dir -r requirements/train.txt
+
+COPY src/ ./src/
+
+
+ENV PYTHONPATH=/app/src
+
+
+ENV MLFLOW_TRACKING_URI=file:///app/mlruns
+
+ENTRYPOINT ["python", "src/main.py"]

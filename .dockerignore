@@ -1,0 +1,10 @@
+data/
+mlruns/
+.git
+*.gitignore
+*.gitattributes
+*.ipynb
+*.pyc
+*.pyo
+*.pyd
+.env
