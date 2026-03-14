@@ -1,0 +1,23 @@
+artifact_path: /content/drive/MyDrive/LeafGuard/mlruns/1/models/m-7de89edca0714a74b9d2f58c6205eba7/artifacts
+flavors:
+  python_function:
+    config:
+      device: null
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pytorch
+    pickle_module_name: mlflow.pytorch.pickle_module
+    python_version: 3.12.12
+  pytorch:
+    code: null
+    model_data: data
+    pytorch_version: 2.10.0+cu128
+mlflow_version: 3.10.1
+model_id: m-7de89edca0714a74b9d2f58c6205eba7
+model_size_bytes: 98588295
+model_uuid: m-7de89edca0714a74b9d2f58c6205eba7
+prompts: null
+run_id: 1d72548621a7432ca0d9a0823bf3e817
+utc_time_created: '2026-03-14 07:14:54.468189'
