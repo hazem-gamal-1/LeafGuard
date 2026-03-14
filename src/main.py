@@ -16,7 +16,6 @@ def main(eval=False):
         print("Starting training...")
         model = train(config)
 
-
         print("Evaluating on test set...")
         if eval:
             _, _, test_loader = prepare_datasets(config)
@@ -30,4 +29,4 @@ def main(eval=False):
 
 
 if __name__ == "__main__":
-    main()
+    main(True)

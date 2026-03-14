@@ -84,7 +84,7 @@ def train(config):
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             best_state = copy.deepcopy(model.state_dict())
-            best_epoch = epoch
+            best_epoch = epoch+1
 
 
 
