@@ -1,4 +1,4 @@
 *.conda
 *.pyc
-
+data/
 *zip

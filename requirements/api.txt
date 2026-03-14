@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+torch
+torchvision
+mlflow
+opencv-python-headless
+albumentations
+numpy
