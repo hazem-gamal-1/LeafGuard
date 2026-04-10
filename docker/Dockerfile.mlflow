@@ -2,11 +2,8 @@ FROM python:3.11-slim
 
 RUN pip install --no-cache-dir mlflow
 
+WORKDIR /app
+
 EXPOSE 5000
 
-CMD ["mlflow", "server", \
-     "--host", "0.0.0.0", \
-     "--port", "5000", \
-     "--backend-store-uri", "sqlite:///app/mlflow.db", \
-     "--default-artifact-root", "file:///app/mlruns", \
-     "--allowed-hosts", "*"]
+CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000", "--backend-store-uri", "sqlite:////mlflow/mlflow.db", "--default-artifact-root", "file:///mlruns", "--serve-artifacts", "--allowed-hosts", "*"]
