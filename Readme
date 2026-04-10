@@ -29,8 +29,7 @@
 | **Best Epoch** | 17 / 20 |
 <br>
 
-<b>Training Curves</b>
-<br>
+# Training Curves
 
 The model was trained for 20 epochs with backbone freezing for the first 10 epochs, then fine-tuned end-to-end.
 
@@ -41,7 +40,7 @@ The model was trained for 20 epochs with backbone freezing for the first 10 epoc
 
 
 
-<summary><b>Confusion Matrix</b></summary>
+# Confusion Matrix
 Near-perfect separation across all 15 disease classes with minimal misclassification.
 
 
